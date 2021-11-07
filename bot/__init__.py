@@ -6,6 +6,9 @@ import asyncio
 import threading
 import requests
 import re
+import logging
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 
 def cronjob():
     threading.Timer(60*5, cronjob).start()
@@ -38,7 +41,9 @@ async def download(event):
                     participant = event.sender_id
                     ))
             except errors.UserNotParticipantError:
-                await event.reply(f"First join to our official channel to access the bot or get the newest news about the bot\n\n@{Config.CHANNEL_USERNAME}\n\nAfter that /start the bot aging.")
+                        await event.reply(f"🔸برای استفاده از ربات ابتدا باید در کانال ما عضو شوید\n🔹سپس وارد ربات شده و دستور /start را راسال کنید\n🆔 @{Config.CHANNEL_USERNAME}",
+                                            reply_markup=InlineKeyboardMarkup(
+                                                [[InlineKeyboardButton(text="💠عضویت در کانال💠",url="t.me/{Config.CHANNEL_USERNAME}")]]))
                 return
         
         if event.file :
@@ -54,7 +59,10 @@ async def download(event):
             id = f"{id_hex}/{get_file_name(msg)}"
             bot_url = f"t.me/{username_bot}?start={id_hex}"
             await event.reply(f"Link to download file: \n\n📎 : {Config.DOMAIN}/{id}\n\n🤖 : {bot_url}")
-            return
+           await event.reply(f"✅فایل شما با موفقیت به لینک تبدیل شد\n🌐 Link : \n{Config.DOMAIN}🆔 @{Config.CHANNEL_USERNAME}",
+                                            reply_markup=InlineKeyboardMarkup(
+                                                [[InlineKeyboardButton(text="⚜️دانلود⚜️",url="{Config.DOMAIN}")]]))
+                return
 
         elif id_msg := re.search("/start (.*)", event.raw_text ):
             if id_hex := id_msg.group(1) :
@@ -79,10 +87,10 @@ async def download(event):
                         await forward_reply.edit(f"will be deleted in 10 second. \n\n📎 : {Config.DOMAIN}/{id_name}\n\n🤖 : {bot_url}")
                         await asyncio.sleep(10)
                         await forward.delete()
-                        await forward_reply.edit(f"📎 : {Config.DOMAIN}/{id_name}\n\n🤖 : {bot_url}",link_preview=True)
+                        await forward_reply.edit(f"📎 : {Config.DOMAIN}/{id_name}\n🤖 : {bot_url}",link_preview=True)
                 return
         if pv:
-            await event.reply("Send an file to get a link to download it")
+            await event.reply(f"🌀خوش آمدید\n🔰برای استفاده از ربات کافی است\nفایل خود را ارسال کرده و سپس لینک آن را دریافت کنید\n\n🆔 @{Config.CHANNEL_USERNAME}")
         
 
     elif event.is_channel:
