@@ -68,10 +68,6 @@ async def download(event):
                 if regex := re.search(r"(\d*)/(\d*)",msg.message):
                     if user_id := int(regex.group(1)) :
                         msg_id = int(regex.group(2))
-                        file = await event.client.get_messages(user_id,ids=msg_id)
-                        if not file or not file.file :
-                            return await event.reply("404! File Not Found")
-                        forward = await file.forward_to(event.chat_id)
                         id_name = f"{id_hex}/{get_file_name(msg)}"
                         bot_url = f"t.me/{username_bot}?start={id_hex}"
                         forward_reply = await forward.reply(f"will be deleted in 21 second. \n\n📎 : {Config.DOMAIN}/{id_name}\n\n🤖 : {bot_url}",link_preview=False)
