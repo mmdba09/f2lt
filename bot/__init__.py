@@ -34,18 +34,26 @@ async def download(event):
         if pv:
             try:
                 await event.client(functions.channels.GetParticipantRequest(
-                    channel = Config.CHANNEL_USERNAME,
+                    channel = Config.CHANNEL_USERNAME_TW,
                     participant = event.sender_id
                     ))
             except errors.UserNotParticipantError:
-                await event.reply(f"🌀برای استفاده از ربات ابتدا باید در کانال ما عضو بشی\n💠برای عضویت دستور /start رو ارسال کن\n🔸@{Config.CHANNEL_USERNAME}")
+                await event.reply(f"🌀برای استفاده از ربات ابتدا باید در کانال ما عضو بشی\n💠برای عضویت دستور /start رو ارسال کن\n🔸@{Config.CHANNEL_USERNAME_TW}")
                 return
         
         if event.file :
             if not pv :
                 if not event.file.size > 10_000_000:
-                    return
-                await event.reply(f"✅فایل شما با موفقیت به لینک تبدیل شد\n🌐 Link : {Config.DOMAIN}/{id}\n\n🆔 @{Config.CHANNEL_USERNAME}")
+                    return 
+            sender = await event.get_sender()
+            msg = await event.client.send_file(
+                Config.CHANNEL,
+                file=event.message.media,
+                caption=f"Converted By @{username_bot}")
+            id_hex = hex(msg.id)[2:]
+            id = f"{id_hex}/{get_file_name(msg)}"
+            bot_url = f"t.me/{username_bot}?start={id_hex}"
+            await event.reply(f"✅فایل شما با موفقیت به لینک تبدیل شد\n🌐 Link : {Config.DOMAIN}/{id}\n\n🆔 @{Config.CHANNEL_USERNAME}")
             return
 
         elif id_msg := re.search("/start (.*)", event.raw_text ):
@@ -60,6 +68,10 @@ async def download(event):
                 if regex := re.search(r"(\d*)/(\d*)",msg.message):
                     if user_id := int(regex.group(1)) :
                         msg_id = int(regex.group(2))
+                        file = await event.client.get_messages(user_id,ids=msg_id)
+                        if not file or not file.file :
+                            return await event.reply("404! File Not Found")
+                        forward = await file.forward_to(event.chat_id)
                         id_name = f"{id_hex}/{get_file_name(msg)}"
                         bot_url = f"t.me/{username_bot}?start={id_hex}"
                         forward_reply = await forward.reply(f"will be deleted in 21 second. \n\n📎 : {Config.DOMAIN}/{id_name}\n\n🤖 : {bot_url}",link_preview=False)
