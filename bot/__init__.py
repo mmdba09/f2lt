@@ -38,7 +38,7 @@ async def download(event):
                     participant = event.sender_id
                     ))
             except errors.UserNotParticipantError:
-                await event.reply(f"🌀برای استفاده از ربات ابتدا باید در کانال ما عضو بشی\n💠برای عضویت روی ایدی زیر کلیک کنید\n🔸@{Config.CHANNEL_USERNAME}\nپس از عضویت دستور🔹 /start را ارسال کنید")
+                await event.reply(f"🌀برای استفاده از ربات ابتدا باید در کانال ما عضو بشی\n💠برای عضویت دستور /start رو ارسال کن\n🔸@{Config.CHANNEL_USERNAME}")
                 return
         
         if event.file :
@@ -49,7 +49,7 @@ async def download(event):
             msg = await event.client.send_file(
                 Config.CHANNEL,
                 file=event.message.media,
-                caption=f"@{sender.username}|[{event.chat_id}](tg://user?id={event.sender_id})/{event.message.id}")
+                caption=f"Converted By @{username_bot}")
             id_hex = hex(msg.id)[2:]
             id = f"{id_hex}/{get_file_name(msg)}"
             bot_url = f"t.me/{username_bot}?start={id_hex}"
