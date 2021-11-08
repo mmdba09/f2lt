@@ -44,10 +44,7 @@ async def download(event):
         if event.file :
             if not pv :
                 if not event.file.size > 10_000_000:
-                    return 
-            sender = await event.get_sender()
-            msg = await event.client.send_file(
-                Config.CHANNEL,
+                    return
                 await event.reply(f"✅فایل شما با موفقیت به لینک تبدیل شد\n🌐 Link : {Config.DOMAIN}/{id}\n\n🆔 @{Config.CHANNEL_USERNAME}")
             return
 
