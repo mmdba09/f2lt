@@ -10,7 +10,7 @@ class Router:
 
     
     async def hello(self, request):
-        return web.Response(text="Hello, world")
+        return web.Response(text="access denied")
 
     async def Downloader(self, request):
         id_hex = request.match_info.get("id")
